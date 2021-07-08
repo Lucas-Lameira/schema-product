@@ -3,27 +3,40 @@
 -- usuario
 INSERT INTO usuario (id, nome, email, senha)  VALUES (DEFAULT, "lucas lameira", "lucaslameira@gmail.com", "123456");
 INSERT INTO usuario VALUES (DEFAULT, "leandro ribeiro", "leandroribeiro@gmail.com", "7891011");
-
+describe usuario;
+select * from usuario;
 
 -- categoria
-INSERT INTO categoria (id, descricao) VALUES (default, 'higiene');
+INSERT INTO categoria (id, descricao) VALUES (default, 'bebida');
 INSERT INTO categoria VALUES
-    (default, 'alimento'),
-    (default, 'bebida'),
-    (default, 'utensilios');
-    
+    (default, 'comida'),
+    (default, 'utensilios'),
+    (default, 'higiene');
+select * from categoria;
+
 
 -- fornecedor 
-INSERT INTO forncedor (id, nome, rua, cep, numero, bairro, id_usuario) VALUES (DEFAULT, "fonecedouro", "RUA", "CEP", "NUMERO", "BAIRRO", 1);
-INSERT INTO forncedor VALUES	
+INSERT INTO fornecedor (id, nome, rua, cep, numero, bairro, id_usuario) VALUES (DEFAULT, "fonecedouro", "RUA", "CEP", "NUMERO", "BAIRRO", 1);
+INSERT INTO fornecedor VALUES	
     (DEFAULT, "atacadinho", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
     (DEFAULT, "liderezoom", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
     (DEFAULT, "super mercaderoi", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
     (DEFAULT, "emporio coquetel", "RUA", "CEP", "NUMERO", "BAIRRO", 2);
-
+select * from fornecedor;
 
 -- telefone
-INSERT INTO telefone (tel, id_fornecedor) VALUES ("(91) 98989-8989", 2);
+INSERT INTO telefone (telefone, id_fornecedor) VALUES ("(91) 98989-8989", 9);
+INSERT INTO telefone VALUES 
+	("(91) 97979-8787", 9),
+    ("(91) 96868-8686", 8), 
+    ("(91) 98585-8585", 10), 
+    ("(91) 91212-2121", 11),
+    ("(91) 93535-5353", 11),
+    ("(91) 91234-5847", 12); 
+select * from telefone;
+
+-- telefone
+INSERT INTO telefone (telefone, id_fornecedor) VALUES ("(91) 98989-8989", 2);
 INSERT INTO telefone VALUES 
 	("(91) 97979-8787", 2),
     ("(91) 96868-8686", 1), 
@@ -31,6 +44,7 @@ INSERT INTO telefone VALUES
     ("(91) 91212-2121", 4),
     ("(91) 93535-5353", 4),
     ("(91) 91234-5847", 5); 
+select * from telefone;
 
 
 -- produto 
@@ -45,26 +59,43 @@ INSERT INTO produto VALUES
     (DEFAULT, "cortador de unha", 12, 8.88, 2, 3),
     (DEFAULT, "feijão galopero 500g", 17, 4.99, DEFAULT, 2),
     (DEFAULT, "café desunião", 4, 4.83, 6, 1);
+
+
+INSERT INTO produto (nome, quantidade, preco_venda, quantidade_minima, id_categoria) values ('Miojo tailandes', 0, 2.50, DEFAULT, 2);
+
+select * from produto;
     
-    
--- item_compra REMEMBER TO CHANGE THOSE TRUE FALSE VALUES, TINYINT IS SOMETHING ELSE
+
 INSERT INTO item_compra (id, data_compra, preco_compra, quantidade, inserido, lucro, id_usuario, cod_produto) 
-VALUES (DEFAULT, "2021-05-05", 2.89, 12,'false', '15', 1, 8);
+VALUES (DEFAULT, "2021-05-05", 2.89, 12, false, '15', 1, 8);
 
 INSERT INTO item_compra VALUES
-	(DEFAULT, "2021-05-06", 2.80, 12,'true', '15', 1, 2),
-    (DEFAULT, '2021-05-07', 7.40, 2, 'true', '15', 1, 6),
-    (DEFAULT, '2021-05-07', 3.20, 6, 'false', '15', 1, 4),
-    (DEFAULT, '2021-05-07', 4.80, 10,'true', '15', 1, 5),
-    (DEFAULT, '2021-05-09', 4.10, 28,'false', '15', 1, 3),
-    (DEFAULT, '2021-05-09', 3.20, 8, 'true', '15', 1, 7),
-    (DEFAULT, '2021-05-15', 5.50, 5, 'true', '15', 1, 1),
-    (DEFAULT, '2021-06-05', 3.20, 6, 'true', '16', 1, 4),
-    (DEFAULT, '2021-06-06', 3.20, 8, 'true', '16', 1, 1);
+	(DEFAULT, "2021-05-06", 2.80, 12, true, '15', 1, 2),
+    (DEFAULT, '2021-05-07', 7.40, 2, true, '15', 1, 6),
+    (DEFAULT, '2021-05-07', 3.20, 6, false, '15', 1, 4),
+    (DEFAULT, '2021-05-07', 4.80, 10, false, '15', 1, 5),
+    (DEFAULT, '2021-05-09', 4.10, 28, false, '15', 1, 3),
+    (DEFAULT, '2021-05-09', 3.20, 8, true, '15', 1, 7),
+    (DEFAULT, '2021-05-15', 5.50, 5, true, '15', 1, 1),
+    (DEFAULT, '2021-06-05', 3.20, 6, true, '16', 1, 4),
+    (DEFAULT, '2021-06-06', 3.20, 8, true, '16', 1, 1);
 
 
 
 -- fornecedor item
+INSERT INTO fornecedor_item (id_compra, id_fornecedor) VALUES (1, 9);
+INSERT INTO fornecedor_item  VALUES 
+	(2, 8),
+    (3, 8),
+    (4, 10),
+    (5, 9),
+    (6, 12),
+    (7, 11),
+    (8, 12),
+    (9, 11),
+    (10, 10);
+
+
 INSERT INTO fornecedor_item (id_compra, id_fornecedor) VALUES (1, 2);
 INSERT INTO fornecedor_item  VALUES 
 	(2, 1),
@@ -77,6 +108,7 @@ INSERT INTO fornecedor_item  VALUES
     (9, 4),
     (10, 3);
     
+    
 
 -- venda
 INSERT INTO venda (cod_venda, id_usuario) VALUES (1, 1);
@@ -88,18 +120,19 @@ INSERT INTO venda values
   (13, 1), (14, 1),
   (15, 2), (16, 2), (17, 2), (18, 2),
   (19, 1), (20, 1);
+  
 
 
 -- item venda 
-INSERT INTO item_venda (id, data_venda, quantidade, cod_venda, cod_produto, id_usuario) 
-VALUES (1, '2021-06-07', 1, 1, 1, 1);
+INSERT INTO item_venda (id, data_venda, quantidade, cod_venda, cod_produto) 
+VALUES (1, '2021-06-07', 1, 1, 1);
 INSERT INTO item_venda VALUES
-  (2, '2021-06-07', 2, 2, 5, 1),
-  (3, '2021-06-07', 8, 3, 3, 1),
-  (4, '2021-06-07', 1, 4, 7, 1),
-  (5, '2021-06-07', 3, 5, 2, 1),
-  (6, '2021-06-08', 1, 6, 4, 2),
-  (7, '2021-06-08', 2, 7, 5, 2),
-  (8, '2021-06-08', 3, 8, 5, 2),
-  (9, '2021-06-09', 4, 9, 8, 1),
-  (10, '2021-06-09', 1, 10, 6, 1);
+  (2, '2021-06-07', 2, 2, 5),
+  (3, '2021-06-07', 8, 3, 3),
+  (4, '2021-06-07', 1, 4, 7),
+  (5, '2021-06-07', 3, 5, 2),
+  (6, '2021-06-08', 1, 6, 4),
+  (7, '2021-06-08', 2, 7, 5),
+  (8, '2021-06-08', 3, 8, 5),
+  (9, '2021-06-09', 4, 9, 8),
+  (10, '2021-06-09', 1, 10, 6);
