@@ -1,10 +1,8 @@
 -- date data "1980-06-25"
-
 -- usuario
 INSERT INTO usuario (id, nome, email, senha)  VALUES (DEFAULT, "lucas lameira", "lucaslameira@gmail.com", "123456");
 INSERT INTO usuario VALUES (DEFAULT, "leandro ribeiro", "leandroribeiro@gmail.com", "7891011");
 describe usuario;
-select * from usuario;
 
 -- categoria
 INSERT INTO categoria (id, descricao) VALUES (default, 'bebida');
@@ -12,28 +10,14 @@ INSERT INTO categoria VALUES
     (default, 'comida'),
     (default, 'utensilios'),
     (default, 'higiene');
-select * from categoria;
-
 
 -- fornecedor 
 INSERT INTO fornecedor (id, nome, rua, cep, numero, bairro, id_usuario) VALUES (DEFAULT, "fonecedouro", "RUA", "CEP", "NUMERO", "BAIRRO", 1);
 INSERT INTO fornecedor VALUES	
-    (DEFAULT, "atacadinho", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
-    (DEFAULT, "liderezoom", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
-    (DEFAULT, "super mercaderoi", "RUA", "CEP", "NUMERO", "BAIRRO", 1),
-    (DEFAULT, "emporio coquetel", "RUA", "CEP", "NUMERO", "BAIRRO", 2);
-select * from fornecedor;
-
--- telefone
-INSERT INTO telefone (telefone, id_fornecedor) VALUES ("(91) 98989-8989", 9);
-INSERT INTO telefone VALUES 
-	("(91) 97979-8787", 9),
-    ("(91) 96868-8686", 8), 
-    ("(91) 98585-8585", 10), 
-    ("(91) 91212-2121", 11),
-    ("(91) 93535-5353", 11),
-    ("(91) 91234-5847", 12); 
-select * from telefone;
+    (DEFAULT, "atacadinho", "passagem alves", "06123-066", "1645", "pratinha", 1),
+    (DEFAULT, "liderezoom", "1° de abril", "05846-047", "1200", "bairro do marco", 1),
+    (DEFAULT, "super mercaderoi", "padre julio maria", "04567-987", "985", "cruzeiro", 1),
+    (DEFAULT, "emporio coquetel", "quinta rua", "45678-068", "465", "umarizal", 2);
 
 -- telefone
 INSERT INTO telefone (telefone, id_fornecedor) VALUES ("(91) 98989-8989", 2);
@@ -44,13 +28,10 @@ INSERT INTO telefone VALUES
     ("(91) 91212-2121", 4),
     ("(91) 93535-5353", 4),
     ("(91) 91234-5847", 5); 
-select * from telefone;
-
 
 -- produto 
 INSERT INTO produto (cod_produto, nome, quantidade, preco_venda, quantidade_minima, id_categoria) 
 VALUES (DEFAULT, "agua mineral marcax 20L", 20, 7.00, DEFAULT, 1);
-
 INSERT INTO produto VALUES
 	(DEFAULT, "macarrao legal 250g", 16, 3.50, 5, 2),
     (DEFAULT, "cerveja skola beet", 0, 5.00, 30, 1),
@@ -59,13 +40,9 @@ INSERT INTO produto VALUES
     (DEFAULT, "cortador de unha", 12, 8.88, 2, 3),
     (DEFAULT, "feijão galopero 500g", 17, 4.99, DEFAULT, 2),
     (DEFAULT, "café desunião", 4, 4.83, 6, 1);
-
-
 INSERT INTO produto (nome, quantidade, preco_venda, quantidade_minima, id_categoria) values ('Miojo tailandes', 0, 2.50, DEFAULT, 2);
 
-select * from produto;
-    
-
+-- item compra
 INSERT INTO item_compra (id, data_compra, preco_compra, quantidade, inserido, lucro, id_usuario, cod_produto) 
 VALUES (DEFAULT, "2021-05-05", 2.89, 12, false, '15', 1, 8);
 
@@ -80,22 +57,7 @@ INSERT INTO item_compra VALUES
     (DEFAULT, '2021-06-05', 3.20, 6, true, '16', 1, 4),
     (DEFAULT, '2021-06-06', 3.20, 8, true, '16', 1, 1);
 
-
-
 -- fornecedor item
-INSERT INTO fornecedor_item (id_compra, id_fornecedor) VALUES (1, 9);
-INSERT INTO fornecedor_item  VALUES 
-	(2, 8),
-    (3, 8),
-    (4, 10),
-    (5, 9),
-    (6, 12),
-    (7, 11),
-    (8, 12),
-    (9, 11),
-    (10, 10);
-
-
 INSERT INTO fornecedor_item (id_compra, id_fornecedor) VALUES (1, 2);
 INSERT INTO fornecedor_item  VALUES 
 	(2, 1),
@@ -107,8 +69,6 @@ INSERT INTO fornecedor_item  VALUES
     (8, 5),
     (9, 4),
     (10, 3);
-    
-    
 
 -- venda
 INSERT INTO venda (cod_venda, id_usuario) VALUES (1, 1);
@@ -121,8 +81,6 @@ INSERT INTO venda values
   (15, 2), (16, 2), (17, 2), (18, 2),
   (19, 1), (20, 1);
   
-
-
 -- item venda 
 INSERT INTO item_venda (id, data_venda, quantidade, cod_venda, cod_produto) 
 VALUES (1, '2021-06-07', 1, 1, 1);

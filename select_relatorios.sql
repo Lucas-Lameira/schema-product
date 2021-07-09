@@ -54,7 +54,6 @@ ON produto.cod_produto = item_venda.cod_produto;
 -- rf23
 SELECT descricao FROM categoria;
 
-
 -- exibir dados dos fornecedores
 SELECT f.nome, t.telefone 
 FROM fornecedor as f JOIN telefone as t

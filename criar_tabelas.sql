@@ -1,7 +1,7 @@
 -- formato de : yyyy-mm-dd
-create database gerenciamentoEstoqueVenda;
-drop database gerenciamentoEstoqueVenda;
-use gerenciamentoEstoqueVenda;
+create database gerenciamento;
+drop database gerenciamento;
+use gerenciamento;
 
 CREATE TABLE IF NOT EXISTS usuario (
 	id INT NOT NULL AUTO_INCREMENT,
@@ -53,14 +53,13 @@ CREATE TABLE IF NOT EXISTS item_compra (
     preco_compra DECIMAL(5,2) NOT NULL,
     quantidade INT UNSIGNED NOT NULL,
     inserido TINYINT NOT NULL,
-    lucro DECIMAL(4,2) UNSIGNED NOT NULL,
+    lucro DECIMAL(4,2) NOT NULL,
     id_usuario INT NOT NULL,
     cod_produto INT NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (id_usuario) REFERENCES usuario (id) ON DELETE RESTRICT,
     FOREIGN KEY (cod_produto) REFERENCES produto (cod_produto) ON DELETE RESTRICT
 );
-describe item_compra;
 
 CREATE TABLE IF NOT EXISTS fornecedor_item (
 	id_compra INT NOT NULL,
@@ -69,6 +68,7 @@ CREATE TABLE IF NOT EXISTS fornecedor_item (
     FOREIGN KEY (id_compra) REFERENCES item_compra (id) ON DELETE CASCADE,
     FOREIGN KEY (id_fornecedor) REFERENCES fornecedor (id) ON DELETE CASCADE 
 );
+describe fornecedor_item;
 
 CREATE TABLE IF NOT EXISTS venda (
 	cod_venda INT NOT NULL AUTO_INCREMENT,
