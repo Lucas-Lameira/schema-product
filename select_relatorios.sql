@@ -15,8 +15,7 @@ ON ic.cod_produto = p.cod_produto;
 
 -- rf11 done
 SELECT produto.nome, produto.preco_venda, produto.quantidade
-FROM produto JOIN categoria
-on categoria.id = produto.id_categoria
+FROM produto
 WHERE produto.quantidade > '0';
 
 -- rf13 done
@@ -29,7 +28,6 @@ SELECT produto.nome, produto.preco_venda, produto.quantidade, categoria.descrica
 FROM produto JOIN categoria
 on categoria.id = produto.id_categoria;
 
-
 -- rf18 done
 SELECT produto.nome, categoria.descricao 
 FROM produto JOIN categoria 
@@ -37,13 +35,13 @@ ON produto.id_categoria = categoria.id
 WHERE categoria.id = '1';
 
 -- rf19
-SELECT nome FROM produto WHERE nome LIKE 'cerveja%';
+SELECT nome FROM produto WHERE nome LIKE 'agua%';
 
 -- rf20
-SELECT preco_venda FROM produto WHERE preco_venda <= '5.0';
+SELECT preco_venda, nome FROM produto WHERE preco_venda <= '5.0';
 
 -- rf22
-SELECT usuario.nome, item_venda.data_venda, produto.nome, item_venda.quantidade, produto.preco_venda 
+SELECT usuario.nome, item_venda.data_venda, produto.nome, item_venda.quantidade, produto.preco_venda
 FROM venda JOIN usuario
 ON venda.id_usuario = usuario.id
 JOIN item_venda 
