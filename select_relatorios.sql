@@ -26,7 +26,7 @@ SELECT nome, quantidade from produto WHERE quantidade <= '10';
 -- rf17 done
 SELECT produto.nome, produto.preco_venda, produto.quantidade, categoria.descricao 
 FROM produto JOIN categoria
-on categoria.id = produto.id_categoria;
+ON categoria.id = produto.id_categoria;
 
 -- rf18 done
 SELECT produto.nome, categoria.descricao 
@@ -62,5 +62,5 @@ SELECT usuario.nome, venda.cod_venda
 FROM usuario JOIN venda
 ON venda.id_usuario = usuario.id; 
 
-
+select "Foda-se" as "Bom dia";
 
