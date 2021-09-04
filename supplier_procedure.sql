@@ -1,7 +1,13 @@
-
 -- ------------------------------add new supplier--------------------------------------
 DELIMITER $$
-CREATE PROCEDURE add_new_supplier(nome varchar(20), rua varchar(50), cep varchar(9), numero varchar(10), bairro varchar (20), id_usuario int)
+CREATE PROCEDURE add_new_supplier(
+	nome VARCHAR(20), 
+    rua VARCHAR(50), 
+    cep VARCHAR(9), 
+    numero VARCHAR(10), 
+    bairro VARCHAR (20), 
+    id_usuario INT
+)
 BEGIN
 	INSERT INTO fornecedor 
     VALUES (DEFAULT, nome, rua, cep, numero, bairro, id_usuario);

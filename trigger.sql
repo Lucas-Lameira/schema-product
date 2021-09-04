@@ -22,3 +22,9 @@ CREATE TRIGGER product_profit BEFORE INSERT
 ON item_compra 
 FOR EACH ROW
 */
+
+
+
+-- trigger para monitorar as quantidades mínimas especificadas
+-- triger para inserir um produto comprado na tabela produtos
+-- trigger para alterar o 'preco-venda' da tabela produtos
