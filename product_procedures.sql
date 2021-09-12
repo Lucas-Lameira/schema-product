@@ -1,25 +1,5 @@
-
-/* Sobre procedures (armazena no servidor de banco de dados??)
-sub-rotina disponivel para aplicações que acessam sistemas de banco de dados relacionais
-podem ser usadas: validação de dados, controle de acesso, execução de declarações, SQL complexas */
-
--- ------------------------------criar procedure exemplo ------------------------------
-DELIMITER $$
-CREATE PROCEDURE verpreco(produtoID SMALLINT)
-BEGIN
-	SELECT concat('O preço do produto ', nome, ' é: ', preco_venda) AS Preco
-	FROM produto
-	WHERE cod_produto = produtoID;
-    SELECT 'Funcionou';
-END$$
-DELIMITER ;
- 
--- invocar procedure
-CALL verpreco(1);
-DROP PROCEDURE verpreco;
-
-
--- ------------------------------RF023 Register default categories--------------------------------------
+-- Sobre procedures : validação de dados, controle de acesso, execução de declarações, SQL complexas
+-- ------------------------------RF023 Register default categories---------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE register_categories()
 BEGIN
@@ -32,61 +12,86 @@ END$$
 DELIMITER ;
 
 
--- ------------------------------Get default categories--------------------------------------
+-- ------------------------------Get default categories-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE get_categories()
 BEGIN
-	SELECT descricao FROM categoria;
+	SELECT * FROM categoria;
 END$$
 DELIMITER ;
 
+CALL get_categories();
 
--- ------------------------------Add new product--------------------------------------
+
+-- ------------------------------Add new product-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE add_new_product(
 	p_name VARCHAR(50),
-	p_qtd INT,
-    p_preco_venda DECIMAL(5,2),
-	p_qtd_min INT,
-    p_id_categoria INT
+	p_qty INT,
+    p_sale_price DECIMAL(5,2),
+	p_min_qty INT,
+    p_id_category INT
 )
 BEGIN
-	IF p_qtd_min = 0 OR p_qtd_min = NULL THEN
-		INSERT INTO produto (cod_produto, nome, quantidade, preco_venda, quantidade_minima, id_categoria) 
-		VALUES (DEFAULT, p_name, p_qtd, p_preco_venda, DEFAULT, 1);
-	ELSE    
-		INSERT INTO produto (cod_produto, nome, quantidade, preco_venda, quantidade_minima, id_categoria) 
-		VALUES (DEFAULT, p_name, p_qtd, p_preco_venda, p_qtd_min, p_id_categoria);
+	DECLARE isLowStock TINYINT;
+    
+	IF p_qty <= p_min_qty THEN
+		SET isLowStock = 1;
+	ELSE 
+		SET isLowStock = 0;
+    END IF;
+    
+	IF p_min_qty = 0 OR ISNULL(p_min_qty) = 1 THEN
+		IF p_qty <= 10 THEN 
+			SET isLowStock = 1;
+		ELSE 
+			SET isLowStock = 0;
+		END IF;
+        
+		INSERT INTO produto (cod_produto, nome, quantidade, preco_venda, quantidade_minima, id_categoria, isLowStock) 
+		VALUES (DEFAULT, p_name, p_qty, p_sale_price, DEFAULT, p_id_category, isLowStock);
+	ELSE
+		INSERT INTO produto (cod_produto, nome, quantidade, preco_venda, quantidade_minima, id_categoria, isLowStock) 
+		VALUES (DEFAULT, p_name, p_qty, p_sale_price, p_min_qty, p_id_category, isLowStock);
 	END IF;
+    
+    -- return cod_produto by it's unique name
+    SELECT cod_produto FROM produto WHERE nome = p_name;
 END$$
 DELIMITER ;
 
+CALL add_new_product('Heine quem', 36, 7.90, 15, 1);
+CALL add_new_product('suco de biribá', 5, 7.90, 0, 1);
 
--- ------------------------------Search for a product--------------------------------------
+
+-- ------------------------------Search for a product------------------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE search_product(codigo int)
 BEGIN
-	SELECT nome, quantidade, preco_venda quantidade_minima, categoria.descricao 
+	SELECT nome, quantidade, preco_venda quantidade_minima, categoria.descricao as catagoria 
     FROM produto JOIN categoria
     ON produto.id_categoria = categoria.id
     WHERE cod_produto = codigo;
 END$$
 DELIMITER ;
+drop procedure search_product;
+call search_product(5);
 
 
--- -------------------------RF017 Search for all the products--------------------------------------
+-- -------------------------RF017 Search for all the products--------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE search_all_products()
 BEGIN
-	SELECT nome, quantidade, preco_venda, quantidade_minima, categoria.descricao 
+	SELECT nome, quantidade, preco_venda, quantidade_minima, categoria.descricao as categoria
     FROM produto JOIN categoria
     ON produto.id_categoria = categoria.id;
 END$$
 DELIMITER ;
+DROP PROCEDURE search_all_products;
 CALL search_all_products();
 
 
--- ------------------------------RF018 Search for a product by category --------------------------------------
+-- ------------------------------RF018 Search for a product by category --------------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE products_by_category(id INT)
 BEGIN
@@ -99,7 +104,7 @@ DELIMITER ;
 CALL products_by_category(1); -- same as CALL products_by_category('1');
 
 
--- ------------------------------RF019 Search product by name--------------------------------------
+-- ------------------------------RF019 Search product by name-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE search_product_by_name(_nome VARCHAR(50))
 BEGIN
@@ -112,7 +117,7 @@ DELIMITER ;
 CALL search_product_by_name('un');
 
 
--- ------------------------------RF020 Search product by price--------------------------------------
+-- ------------------------------RF020 Search product by price-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE search_product_by_price(price DECIMAL(5, 2))
 BEGIN
@@ -125,15 +130,39 @@ DELIMITER ;
 CALL search_product_by_price(4.2);
 
 
--- ------------------------------Update a product--------------------------------------
+-- ------------------------------Update a product--------------------------------DONE------
 DELIMITER $$
-CREATE PROCEDURE update_product(codigo int, preco float)
+CREATE PROCEDURE update_product(
+	p_cod INT, 
+    p_name VARCHAR(50),
+    p_qty INT,
+    p_price DECIMAL(5,2),
+    p_min_qty INT,
+    p_id_category INT
+)
 BEGIN
+	DECLARE isLowStock TINYINT;
+    
+	IF p_qty <= p_min_qty THEN
+		SET isLowStock = 1;
+	ELSE
+		SET isLowStock = 0;
+    END IF;
+		
 	UPDATE produto 
-    SET preco_venda = preco
-    WHERE cod_produto = codigo;
+	SET 
+		nome = p_name, 
+        quantidade = p_qty,
+        preco_venda = p_price,
+        quantidade_minima = p_min_qty,
+        id_categoria = p_id_category,
+        isLowStock = isLowStock
+	WHERE cod_produto = p_cod;
 END$$
 DELIMITER ;
+drop procedure update_product;
+CALL update_product(3, 'cerveja skola beet', 31, 3.90, 30, 1);
+select * from produto;
 
 
 -- ------------------------------Delete a product--------------------------------------

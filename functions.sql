@@ -3,16 +3,7 @@
 -- funções são usadas para gerar um valor que pode ser usado em uma expressão. É executada como parte de um expressão
 
 -- aumentar preço de compra para preco de venda
-DELIMITER $$
-CREATE FUNCTION aumentaPreco (compra FLOAT, lucro FLOAT) 
-RETURNS INT
-BEGIN 
-	RETURN compra * (lucro/100) + compra;
-END$$
-DELIMITER ;
-DROP FUNCTION aumentaPreco;
 
-SELECT aumentaPreco(5.5, 15) AS RESULTADO;
 
 
 -- inserir na tabela produto os itens de compra, com valor atualizado
