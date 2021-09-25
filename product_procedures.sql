@@ -1,5 +1,4 @@
--- Sobre procedures : validação de dados, controle de acesso, execução de declarações, SQL complexas
--- ------------------------------RF023 Register default categories---------------------------DONE-------
+-- ------------------------------ RF023 Register default categories ---------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE register_categories()
 BEGIN
@@ -22,7 +21,7 @@ DELIMITER ;
 
 CALL get_categories();
 
-
+select * from produto;
 -- ------------------------------Add new product-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE add_new_product(
@@ -35,11 +34,12 @@ CREATE PROCEDURE add_new_product(
 BEGIN
 	DECLARE isLowStock TINYINT;
     
+	-- Set low-stock accordingly
 	IF p_qty <= p_min_qty THEN
 		SET isLowStock = 1;
 	ELSE 
 		SET isLowStock = 0;
-    END IF;
+	END IF;
     
 	IF p_min_qty = 0 OR ISNULL(p_min_qty) = 1 THEN
 		IF p_qty <= 10 THEN 
@@ -62,7 +62,10 @@ DELIMITER ;
 
 CALL add_new_product('Heine quem', 36, 7.90, 15, 1);
 CALL add_new_product('suco de biribá', 5, 7.90, 0, 1);
-
+CALL add_new_product('teste', 0, 2.50, 10, 2);
+CALL add_new_product('teste1', 0, 2.50, 10, 2);
+CALL add_new_product('teste200', 0, 2.50, 10, 2);
+select * from produto;
 
 -- ------------------------------Search for a product------------------------------DONE--------
 DELIMITER $$
@@ -78,20 +81,30 @@ drop procedure search_product;
 call search_product(5);
 
 
--- -------------------------RF017 Search for all the products--------------------------------DONE------
+
+-- RF017-------------------------RF017 Search for all the products--------------------------------DONE------
 DELIMITER $$
-CREATE PROCEDURE search_all_products()
+CREATE PROCEDURE get_products()
 BEGIN
-	SELECT nome, quantidade, preco_venda, quantidade_minima, categoria.descricao as categoria
+	SELECT 
+		cod_produto,
+		nome, 
+		quantidade, 
+        preco_venda, 
+        quantidade_minima, 
+        isLowStock,
+        id_categoria,
+        categoria.descricao as categoria
     FROM produto JOIN categoria
     ON produto.id_categoria = categoria.id;
 END$$
 DELIMITER ;
-DROP PROCEDURE search_all_products;
-CALL search_all_products();
+DROP PROCEDURE get_products;
+CALL get_products();
+select * from produto;
 
 
--- ------------------------------RF018 Search for a product by category --------------------------DONE--------
+-- RF018------------------------------ Search for a product by category --------------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE products_by_category(id INT)
 BEGIN
@@ -104,7 +117,7 @@ DELIMITER ;
 CALL products_by_category(1); -- same as CALL products_by_category('1');
 
 
--- ------------------------------RF019 Search product by name-------------------------------DONE-------
+-- RF019------------------------------ Search product by name-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE search_product_by_name(_nome VARCHAR(50))
 BEGIN
@@ -114,10 +127,10 @@ BEGIN
     WHERE produto.nome LIKE CONCAT('%',_nome,'%');
 END$$
 DELIMITER ;
-CALL search_product_by_name('un');
+CALL search_product_by_name('teste110');
 
 
--- ------------------------------RF020 Search product by price-------------------------------DONE-------
+-- RF020------------------------------ Search product by price-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE search_product_by_price(price DECIMAL(5, 2))
 BEGIN
@@ -130,7 +143,7 @@ DELIMITER ;
 CALL search_product_by_price(4.2);
 
 
--- ------------------------------Update a product--------------------------------DONE------
+-- RF016------------------------------Update a product--------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE update_product(
 	p_cod INT, 
@@ -165,20 +178,42 @@ CALL update_product(3, 'cerveja skola beet', 31, 3.90, 30, 1);
 select * from produto;
 
 
--- ------------------------------Delete a product--------------------------------------
+-- RF015------------------------------Delete a product------------------------------DONE--------
 DELIMITER $$
-CREATE PROCEDURE delete_product(codigo int)
+CREATE PROCEDURE delete_product(
+	product_id INT,
+    user_email VARCHAR(50),
+    user_password VARCHAR(100)
+)
 BEGIN
-	-- pegar a quantidade do produto e verificar se é igual a zero
-    -- se não for, verificar usuário e senha para excluir o produto
+	DECLARE qty INTEGER;
+    DECLARE u_email VARCHAR(50);
+    DECLARE u_pass VARCHAR(100);    
     
-	DELETE FROM produto 
-    WHERE cod_produto = codigo; 
+    SELECT quantidade INTO qty FROM produto
+    WHERE cod_produto = product_id;
+	
+    SELECT email, senha INTO u_email, u_pass FROM usuario
+    WHERE email = user_email AND senha = user_password;
+    
+    IF qty = 0 THEN
+		DELETE FROM produto 
+		WHERE cod_produto = product_id;
+	ELSEIF qty > 0 AND iSNULL(u_email) = 0 AND ISNULL(u_pass) = 0 THEN
+		DELETE FROM produto 
+		WHERE cod_produto = product_id;
+	ELSE
+		SELECT "Ainda existem produtos no estoque | email e senha incorretos";
+	END IF;
 END$$
 DELIMITER ;
+CALL delete_product(18, 'lucaslameira@gmail.com', '123456');
+SELECT * FROM produto;
+DROP PROCEDURE delete_product;
+describe usuario;
+select * from usuario;
 
-
--- RF008------------------------------show product supplier--------------------------------------
+-- RF008------------------------------show product supplier--------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE show_product_supplier()
 BEGIN
@@ -194,7 +229,7 @@ DELIMITER ;
 CALL show_product_supplier();
 
 
--- ---------------------- RF011 show products available for sale--------------------------------------
+-- RF011---------------------- show products available for sale ---------------------------DONE---------
 DELIMITER $$
 CREATE PROCEDURE products_for_sale()
 BEGIN

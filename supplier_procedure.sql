@@ -1,4 +1,4 @@
--- ------------------------------ add new supplier ------------------------------DONE--------
+-- RF006------------------------------ add new supplier ------------------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE add_new_supplier(
 	nome VARCHAR(50), 

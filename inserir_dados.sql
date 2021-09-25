@@ -2,14 +2,7 @@
 -- usuario
 INSERT INTO usuario (id, nome, email, senha)  VALUES (DEFAULT, "lucas lameira", "lucaslameira@gmail.com", "123456");
 INSERT INTO usuario VALUES (DEFAULT, "leandro ribeiro", "leandroribeiro@gmail.com", "7891011");
-describe usuario;
 
--- categoria
-INSERT INTO categoria (id, descricao) VALUES (default, 'bebida');
-INSERT INTO categoria VALUES
-    (default, 'comida'),
-    (default, 'utensilios'),
-    (default, 'higiene');
 
 -- fornecedor 
 INSERT INTO fornecedor (id, nome, rua, cep, numero, bairro, id_usuario) VALUES (DEFAULT, "fonecedouro", "RUA", "CEP", "NUMERO", "BAIRRO", 1);

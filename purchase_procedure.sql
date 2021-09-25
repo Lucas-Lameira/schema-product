@@ -87,14 +87,14 @@ END$$
 DELIMITER ;
 
 -- _date, price, product_qty, isInsertedInProduct, profit, user_id, cod_product, id_supplier
-CALL new_purchase('2021-09-17', 2.85, 5, 0, 5.0, 1, 3, 1);
+CALL new_purchase('2021-05-07', 2.85, 2, 1, 15.0, 1, 3, 1);
 DROP PROCEDURE new_purchase;
-
 select * from produto;
 select * from item_compra;
 select * from fornecedor_item;
 
--- ---------------------- update product when 'isInserted' change ---------------------DONE------
+
+-- RF009---------------------- update product when 'isInserted' change ---------------------DONE------
 DELIMITER $$
 CREATE TRIGGER change_product
 AFTER UPDATE ON item_compra FOR EACH ROW 
@@ -182,7 +182,7 @@ describe item_compra;
 
 
 
--- ------------------------------ show purchase history ------------------------------DONE--------
+-- RF010------------------------------ show purchase history ------------------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE purchase_history()
 BEGIN

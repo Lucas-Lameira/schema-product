@@ -1,4 +1,4 @@
--- ---------------------------- RF022 Show sales history --------------------------------DONE------
+-- RF022----------------------------  Show sales history --------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE sales_history()
 BEGIN
@@ -53,13 +53,13 @@ BEGIN
     COMMIT;
 END$$
 DELIMITER ;
-
 CALL make_sale(2, '2021-12-09', 2, 6, 8); -- user_id, date, qtd, cod_venda, cod_produto
-
 select * from produto;
 select * from item_venda order by cod_venda;
 select * from venda;
--- ----------------------------Trigger when sale---------------------------------DONE-----
+
+
+-- RF013----------------------------Trigger when sale---------------------------------DONE-----
 DELIMITER $$
 CREATE TRIGGER update_product_when_sale
 AFTER INSERT ON item_venda FOR EACH ROW
