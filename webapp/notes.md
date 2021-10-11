@@ -38,3 +38,24 @@ quando um botão está com a prop **flat**, a prop **color** controla o foregrou
 
 mx-8
 py-2
+
+# old flex grid system
+
+<!--
+still the same
+<v-container>
+   this is a row
+   <v-layout row wrap justify justify-bla>
+
+      this is a col
+      <v-flex xs  md6 >
+         <v-btn>click me</v-btn>
+      </v-flex>
+
+      this is a col
+      <v-flex xs  md6 >
+         <v-btn>click me</v-btn>
+      </v-flex>
+   </v-layout>
+</v-container>
+   -->

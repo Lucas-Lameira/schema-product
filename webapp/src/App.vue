@@ -3,7 +3,7 @@
   <v-app>
     <Navbar />
     <!-- Main content of the page -->
-    <v-main>
+    <v-main class="grey darken-1">
       <!-- routers -->
       <router-view/> 
     </v-main>

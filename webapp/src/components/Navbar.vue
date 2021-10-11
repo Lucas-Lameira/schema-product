@@ -19,7 +19,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn>
+      <v-btn class="orange white--text"> 
         <span>Sign out</span>
         <v-icon right>mdi-export</v-icon>
       </v-btn>
