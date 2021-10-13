@@ -1,3 +1,5 @@
+http://127.0.0.1:5000/
+
 # colors
 
 red--text
@@ -39,6 +41,11 @@ quando um botão está com a prop **flat**, a prop **color** controla o foregrou
 mx-8
 py-2
 
+# align and justify (column)
+
+align = verticaly
+justify = horizontaly
+
 # old flex grid system
 
 <!--
@@ -59,3 +66,20 @@ still the same
    </v-layout>
 </v-container>
    -->
+
+prepend-icon="mdi-lightbulb"
+
+<v-col cols="12">
+   <v-text-field
+      label="Password*"
+      type="password"
+      required
+   ></v-text-field>
+</v-col>
+
+# vue conditions
+
+v-if=""
+v-else-if=""
+v-else=""
+v-show=""
