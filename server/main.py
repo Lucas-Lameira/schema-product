@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request, make_response
 import flask
 from flask_cors import CORS
 from mysql.connector import Error, MySQLConnection
@@ -13,18 +13,174 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route("/products", methods=["GET"])
+@app.route("/products", methods=["GET", "POST", "DELETE", "PUT"])
 def products():
     try:
         connection = MySQLConnection(**DB_CONFIG)
         cursor = connection.cursor()
 
-        cursor.callproc('get_products')
+        if request.method == "POST":
+            # print(request.get_data()) retorna uma string
+            data = request.get_json()
+            newProduct = []
+
+            for attribute in data:
+                newProduct.append(data[attribute])
+
+            cursor.callproc('add_new_product', newProduct)
+
+            for result in cursor.stored_results():
+
+                row = result.fetchall()
+
+            status_code = 201  # created status code
+
+        elif request.method == "GET":
+            cursor.callproc('get_products')
+
+            # result is a MySQLCursorBuffered list_iterator object
+            for result in cursor.stored_results():
+                # list of tuple
+                row = result.fetchall()  # list
+
+            status_code = 200
+
+        elif request.method == "DELETE":
+            producId = request.args.get('id')
+            cursor.callproc('delete_product', [producId])
+
+            row = "produto {} deletado".format(producId)
+            status_code = 204
+
+        elif request.method == "PUT":
+            # list
+            product = request.get_json()
+            cursor.callproc('update_product', product)
+
+            # result is a MySQLCursorBuffered list_iterator object
+            for result in cursor.stored_results():
+                # list of tuple
+                row = result.fetchall()  # list
+
+            print(row)
+            status_code = 200
+    except Error as error:
+        print(error)
+        row = error
+        # status_code = 400  # bad request status code
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(row), status_code
+
+
+@app.route("/sales", methods=["GET", "POST"])
+def teste():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        if request.method == "GET":
+            # call the sales history procedure
+            cursor.callproc('products_for_sale')
+
+            # result is a MySQLCursorBuffered list_iterator object
+            for result in cursor.stored_results():
+                # list of tuple
+                row = result.fetchall()  # list
+
+            print(row)
+        elif request.method == "POST":
+            data = request.get_json()  # [[],[]]
+            print(data)
+
+        # (user_id, data de venda, quantidade, cod_venda, cod_produto)
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(row)
+
+
+@app.route('/login', methods=["POST"])
+def login():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        data = request.get_json()
+
+        # lazy
+        args = [data['userEmail'], data['userPassword']]
+
+        cursor.callproc('login_user', args)
 
         # result is a MySQLCursorBuffered list_iterator object
         for result in cursor.stored_results():
             # list of tuple
+            row = result.fetchall()  # list [()]
+
+        # [('Senha ou Email Inválidos',)]
+        # (1, 'lucas lameira', 'lucaslameira@gmail.com')
+        # row list
+        # row[0] tuple
+
+        if len(row[0]) == 3:
+            status_code = 200
+        else:
+            status_code = 401
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    # tuple isn't a valid response
+    return flask.jsonify(row[0]), status_code
+
+
+@app.route('/categories')
+def get_categories():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        cursor.callproc('get_categories')
+
+        # result is a MySQLCursorBuffered list_iterator object
+        for result in cursor.stored_results():
+            # data format [[],[]]
             row = result.fetchall()
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(row)
+
+
+@app.route('/products/categories', methods=["GET"])
+def get_products_by_category():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        categoryId = request.args.get('id')
+        print(categoryId)
+
+        cursor.callproc('products_by_category', [categoryId])
+
+        # result is a MySQLCursorBuffered list_iterator object
+        for result in cursor.stored_results():
+            # list of tuple
+            row = result.fetchall()  # list
+
     except Error as error:
         print(error)
     finally:
@@ -35,8 +191,4 @@ def products():
 
 
 if __name__ == '__main__':
-    # When running locally, disable OAuthlib's HTTPs verification.
-    # turn it off in production.
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
     app.run('127.0.0.1', 5000, debug=True)
