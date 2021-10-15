@@ -32,7 +32,7 @@
                   <v-text-field
                     label="Nome do produto*"
                     required
-                    v-model="productName"
+                    v-model="newProduct.name"
                     :rules="nameRules"
                   />
                 </v-col>
@@ -41,7 +41,7 @@
                   <v-text-field
                     label="Quantidade"
                     required
-                    v-model.number="productQuantity"
+                    v-model.number="newProduct.quantity"
                     :rules="inputRules"
                   />
                 </v-col>
@@ -49,20 +49,24 @@
                 <v-col cols="4">
                   <v-text-field
                     label="Preço*"
-                    v-model.number="price"
+                    v-model.number="newProduct.price"
                     required
                     :rules="inputRules"
                   />
                 </v-col>
 
                 <v-col cols="4">
-                  <v-text-field label="min*" required v-model.number="minQty" />
+                  <v-text-field
+                    label="min*"
+                    required
+                    v-model.number="newProduct.minQty"
+                  />
                 </v-col>
 
                 <v-col cols="12" sm="6">
                   <v-select
-                    :items="['Bebida', 'Comida', 'Utensílio', 'higiene']"
-                    v-model="category"
+                    :items="['Bebida', 'Comida', 'Utensílio', 'Higiene']"
+                    v-model="newProduct.categoryId"
                     label="Categoria*"
                     :rules="categoryRules"
                     required
@@ -87,42 +91,50 @@
 
 
 <script>
-import api from "../services/api";
+import { mapActions } from "vuex";
 
 export default {
-  name: "NewProductPopup",
+  name: "AddProductForm",
   data: () => ({
     dialog: false,
     hidden: false,
-    productName: "",
-    productQuantity: null,
-    minQty: 10,
-    price: null,
-    category: null,
+    newProduct: {
+      name: "",
+      quantity: null,
+      minQty: 10,
+      price: null,
+      categoryId: null,
+    },
     inputRules: [(v) => v > 0 || "na numero"],
     nameRules: [(v) => v.length >= 3 || "Nome inválido"],
     categoryRules: [(v) => v !== null || "Escolha uma categoria"],
   }),
   methods: {
-    async submit() {
+    ...mapActions(["addNewProduct"]),
+    submit() {
       if (this.$refs.newProductForm.validate()) {
         this.dialog = false;
 
-        let newProduct = {
-          name: this.productName,
-          quantity: this.productQuantity,
-          price: this.price,
-          minQty: this.minQty,
-          category: 3,
-        };
-
-        /* make a post request to save in DB */
-        try {
-          const result = await api.post("/products", newProduct);
-          console.log(result);
-        } catch (error) {
-          console.log(error);
+        switch (this.newProduct.categoryId) {
+          case "Bebida":
+            this.newProduct.categoryId = 1;
+            break;
+          case "Comida":
+            this.newProduct.categoryId = 2;
+            break;
+          case "Utensílio":
+            this.newProduct.categoryId = 3;
+            break;
+          case "Higiene":
+            this.newProduct.categoryId = 4;
+            break;
+          default:
+            this.newProduct.categoryId = 1;
         }
+
+        console.log(this.newProduct);
+        /* make a post request to save in DB */
+        this.addNewProduct(this.newProduct);
       }
     },
   },
