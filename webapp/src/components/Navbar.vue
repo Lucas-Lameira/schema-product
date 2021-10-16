@@ -1,6 +1,7 @@
 <template>
   <nav>
     <v-toolbar>
+      <!-- logo -->
       <v-toolbar-title>
         <span class="orange--text font-weight-bold">APP</span>
         <span class="font-weight-medium">roduct</span>
@@ -8,6 +9,7 @@
 
       <v-spacer></v-spacer>
 
+      <!-- menu tabs for navigation -->
       <div>
         <v-tabs>
           <v-tabs-slider color="orange"></v-tabs-slider>
@@ -25,16 +27,34 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn class="orange white--text" @click="signout">
-        <span>Sign out</span>
-        <v-icon right>mdi-export</v-icon>
-      </v-btn>
+      <Cart />
+
+      <!-- dropdown menu -->
+      <v-menu offset-y>
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn class="orange white--text" v-bind="attrs" v-on="on">
+            <span>Lucas lameira</span>
+            <v-icon right>mdi-menu-down-outline</v-icon>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item v-for="(item, index) in items" :key="index">
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-toolbar>
   </nav>
 </template>
 
 <script>
+import Cart from "./Cart.vue";
+
 export default {
+  name: "Navbar",
+  components: {
+    Cart,
+  },
   data() {
     return {
       routes: [
@@ -43,6 +63,12 @@ export default {
         { route: "/sales", name: "Sales" },
         { route: "/purchases", name: "Purchase" },
         { route: "/about", name: "About" },
+      ],
+      items: [
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me" },
+        { title: "Click Me 2" },
       ],
     };
   },

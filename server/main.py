@@ -20,7 +20,7 @@ def products():
         cursor = connection.cursor()
 
         if request.method == "POST":
-            # print(request.get_data()) retorna uma string
+            # print(request.get_data()) retorna uma bytes string
             data = request.get_json()
             newProduct = []
 
@@ -76,7 +76,7 @@ def products():
 
 
 @app.route("/sales", methods=["GET", "POST"])
-def teste():
+def sales():
     try:
         connection = MySQLConnection(**DB_CONFIG)
         cursor = connection.cursor()
@@ -90,19 +90,42 @@ def teste():
                 # list of tuple
                 row = result.fetchall()  # list
 
-            print(row)
         elif request.method == "POST":
-            data = request.get_json()  # [[],[]]
-            print(data)
+            user_id = request.args.get("user_id")
 
-        # (user_id, data de venda, quantidade, cod_venda, cod_produto)
+            # raise an error if the user is not valid
+            if user_id == None or not user_id.isdigit():
+                raise Error("No user")
+
+            # pass a mandatory list as an argument
+            args = [user_id]
+            cursor.callproc('register_sale', args)
+
+            # get the return value from db
+            for result in cursor.stored_results():
+                row = result.fetchall()
+
+                # extrac the code for sale [(code,)]
+                code_sale = row[0][0]
+
+            # [quantity, cod_product] - [[],[]]
+            sales_data = request.get_json()
+
+            # make sale
+            for sale_item in sales_data:
+                sale_item.append(code_sale)
+                cursor.callproc('make_sale', sale_item)
+                for result in cursor.stored_results():
+                    # get return from db [(1,)]
+                    row = result.fetchall()
+                    print(row)
     except Error as error:
         print(error)
     finally:
         cursor.close()
         connection.close()
 
-    return flask.jsonify(row)
+    return "flask.jsonify(row)"
 
 
 @app.route('/login', methods=["POST"])
@@ -181,6 +204,37 @@ def get_products_by_category():
             # list of tuple
             row = result.fetchall()  # list
 
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(row)
+
+
+@app.route('/teste', methods=["POST"])
+def teste():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        data = request.get_json()  # [[],[]]
+
+        cod_sale = None
+
+        for item in data:
+            cursor.callproc('teste_proc', item)
+            for result in cursor.stored_results():
+                # list of tuple
+                row = result.fetchall()  # list [(),()] only one, cod_venda
+                cod_sale = row[0][0]
+                print('cod_sale', cod_sale)
+
+        """ print('row:', row[0][0]) # id
+        print(type(row[0][0])) """
+
+        # (user_id, data de venda, quantidade de venda do produto, cod_venda, cod_produto)
     except Error as error:
         print(error)
     finally:

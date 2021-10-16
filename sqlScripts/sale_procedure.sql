@@ -25,50 +25,61 @@ drop procedure sales_history;
 CALL sales_history();
 
 
+-- ---------------------------- Register a sale --------------------------------DONE------
+DELIMITER $$
+CREATE PROCEDURE register_sale(user_id INT)
+BEGIN
+    DECLARE sale_code INT;
+    
+    START TRANSACTION;
+		INSERT INTO venda (cod_venda, id_usuario) VALUES (DEFAULT, user_id);
+        SET sale_code = LAST_INSERT_ID();
+	COMMIT;
+    
+    SELECT sale_code;
+END$$
+DELIMITER ;
 
 -- ---------------------------- Make a sale --------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE make_sale(
-	user_id INT,
-	_date DATE,
-    qtd INT,
-    cod_sale INT,
-    cod_product INT)
+    qty INT,
+    cod_product INT,
+	cod_sale INT
+)
 BEGIN
-
+	
     DECLARE product_quantity INT;
-	DECLARE sale INT;
+    DECLARE _date DATE;
     
-    -- get result set as sale to check it it's null or not
-    SELECT cod_venda INTO sale 
-    FROM venda 
-    WHERE id_usuario = user_id AND cod_venda = cod_sale;
-    
+	SET _date = CURDATE();
     
     START TRANSACTION;
-    -- cadastrar venda a venda se ela não existir, varios itens_venda mas uma venda só! 
-    IF ISNULL(sale) = 1 THEN
-		INSERT INTO venda (cod_venda, id_usuario) VALUES (cod_sale, user_id);
-	END IF;
-    
-    -- get quantity of products as 'product_quantity'
-    SELECT quantidade INTO product_quantity FROM produto
-    WHERE cod_produto = cod_product;
+		-- get quantity of products as 'product_quantity'
+		SELECT quantidade INTO product_quantity FROM produto
+		WHERE cod_produto = cod_product;
 	
-    -- ensure there is enough products in stock 
-    IF (product_quantity - qtd) >= 0 THEN
-		INSERT INTO item_venda (data_venda, quantidade, cod_venda, cod_produto) 
-		VALUES (_date, qtd, cod_sale, cod_product);
-    ELSE
-		SELECT "Quantidade insuficiente no estoque";
-    END IF;
+		-- ensure there is enough products in stock 
+		IF (product_quantity - qty) >= 0 THEN
+			INSERT INTO item_venda (data_venda, quantidade, cod_venda, cod_produto) 
+			VALUES (_date, qty, cod_sale, cod_product);
+            
+            SELECT 1;
+		ELSE
+			SELECT "Quantidade insuficiente no estoque";
+		END IF;
     COMMIT;
 END$$
 DELIMITER ;
-CALL make_sale(2, '2021-12-09', 2, 6, 8); -- user_id, date, qtd, cod_venda, cod_produto
+
+
+drop procedure make_sale;
 select * from produto;
 select * from item_venda order by cod_venda;
 select * from venda;
+
+select * from usuario;
+select * from produto;
 
 
 -- RF013----------------------------Trigger when sale---------------------------------DONE-----
@@ -111,3 +122,26 @@ END$$
 DELIMITER ;
 
 CALL delete_sale(1);
+
+
+
+DELIMITER $$
+CREATE PROCEDURE teste_proc(xd varchar(50))
+BEGIN
+	declare cod_teste int;
+    start transaction ;
+	
+    insert into teste (nome) values (xd);
+    
+    commit;
+    set cod_teste = last_insert_id();
+    
+    select cod_teste;
+END$$
+DELIMITER ;
+
+select * from teste;
+CALL teste_proc("jujujujuju");
+drop procedure teste_proc;
+describe teste;
+describe venda;

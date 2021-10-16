@@ -1,16 +1,13 @@
 <template>
-  <div>
+  <div class="OLa">
+    <FilterMenu />
+    <!-- <section v-if="errored">
+      <p>Erro ao carregar os produtos, aperte f5 ou volte mais tarde</p>
+    </section>
+
+    <span v-if="loading">Carregando...</span> -->
     <v-container>
-      <section v-if="errored">
-        <p>Erro ao carregar os produtos, aperte f5 ou volte mais tarde</p>
-      </section>
-
       <v-row>
-        <span v-if="loading">Carregando...</span>
-
-        <v-col class="pl-7 mb-4 mt-2" cols="4">
-          <FilterMenu />
-        </v-col>
         <v-col
           cols="12"
           md="6"
@@ -75,8 +72,8 @@ export default {
   name: "Product",
   data() {
     return {
-      loading: false,
-      errored: false,
+      /*  loading: false,
+      errored: false, */
     };
   },
   components: {

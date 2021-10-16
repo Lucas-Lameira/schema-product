@@ -83,3 +83,13 @@ v-if=""
 v-else-if=""
 v-else=""
 v-show=""
+
+
+<!-- sales data -->
+{
+  id: saleProduct[0],
+  productName: saleProduct[1],
+  stock: saleProduct[2],
+  price: saleProduct[3],
+  categoryId: saleProduct[4],
+  isLowStock: saleProduct[5]

@@ -1,11 +1,10 @@
 <template>
-  <span class="ml-4">
+  <span class="mr-4">
     <v-tooltip bottom>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
           @click="resetFilter"
           color="orange"
-          dark
           icon
           v-bind="attrs"
           v-on="on"

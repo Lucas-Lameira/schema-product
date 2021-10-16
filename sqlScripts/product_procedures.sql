@@ -260,7 +260,10 @@ CALL show_product_supplier();
 DELIMITER $$
 CREATE PROCEDURE products_for_sale()
 BEGIN
-	SELECT cod_produto, nome, quantidade, preco_venda, id_categoria, isLowStock
+	DECLARE qtd_sale integer;
+    SET qtd_sale = 0;
+    
+	SELECT cod_produto, nome, quantidade as estoque, preco_venda, id_categoria, isLowStock, qtd_sale
 	FROM produto JOIN categoria 
 	ON produto.id_categoria = categoria.id
 	WHERE quantidade > 0 ORDER BY nome;
