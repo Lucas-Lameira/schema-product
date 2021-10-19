@@ -1,7 +1,7 @@
 <template>
   <!-- root component -->
   <v-app>
-    <Navbar v-if="loggedIn" />
+    <Navbar v-if="isAuth" />
     <!-- Main title -->
     <h1 class="text-center mt-4">
       <span class="orange--text text">App</span>Product
@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import Navbar from "./components/Navbar.vue";
 export default {
   name: "App",
@@ -28,9 +28,7 @@ export default {
     loggedIn: false,
   }),
   methods: mapActions(["fetchCategories"]),
-  mounted() {
-    this.$store.state.user ? (this.loggedIn = true) : (this.loggedIn = false);
-  },
+  computed: mapGetters(["isAuth"]),
   created() {
     this.fetchCategories();
   },

@@ -1,7 +1,5 @@
 <template>
   <div>
-    <FilterMenu />
-
     <ProductCard />
   </div>
 </template>
@@ -12,7 +10,7 @@ import FilterMenu from "../components/filterComponents/FilterMenu.vue";
 import ProductCard from "../components/ProductCard.vue";
 
 export default {
-  name: "About",
+  name: "Sale",
   components: {
     FilterMenu,
     ProductCard,

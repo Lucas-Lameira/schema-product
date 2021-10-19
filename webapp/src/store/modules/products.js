@@ -28,6 +28,7 @@ const actions = {
    async addNewProduct(context, newProduct) {
       try {
          const result = await api.post("/products", newProduct);
+         console.log(result)
          console.log(result.data[0]);
          context.commit('setNewProduct', result.data[0])
       } catch (error) {
@@ -44,6 +45,8 @@ const actions = {
          const result = await api.put('/products', values, {
             params: { id: product[0] }
          });
+
+         console.log(result)
 
          context.commit('setUpdatedProduct', result.data[0])
       } catch (error) {

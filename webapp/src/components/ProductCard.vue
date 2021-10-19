@@ -1,12 +1,12 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12">
-        <v-card
-          class="mx-auto mb-2"
-          v-for="saleProduct in allProductsForSale"
-          :key="saleProduct[0]"
-        >
+      <v-col
+        cols="12"
+        v-for="(saleProduct, index) in allProductsForSale"
+        :key="index"
+      >
+        <v-card class="mx-auto mb-2" v-if="saleProduct[2] !== 0">
           <v-card-text>
             <div class="d-flex justify-space-between">
               <p class="text-h5 text--primary">
@@ -30,6 +30,7 @@
                     <v-btn
                       small
                       class="orange white--text"
+                      :disabled="saleProduct[2] == 0"
                       v-bind="attrs"
                       v-on="on"
                     >
@@ -40,9 +41,9 @@
 
                   <v-list>
                     <v-list-item
-                      v-for="quantity in saleProduct[2] - saleProduct[2] + 5"
-                      :key="quantity"
-                      @click="saleProduct[6] = quantity"
+                      v-for="(quantity, index) in saleProduct[2]"
+                      :key="index"
+                      @click="updatePro(quantity, saleProduct[0])"
                     >
                       <v-list-item-title>{{ quantity }}</v-list-item-title>
                     </v-list-item>
@@ -51,12 +52,12 @@
               </div>
               <v-btn
                 text
-                :disabled="saleProduct[6] == 0"
                 color="orange"
+                :disabled="saleProduct[6] === 0 || saleProduct[2] === 0"
                 @click="addToCart(saleProduct)"
                 class="px-0"
               >
-                <span>adicionar ao carrinho</span>
+                <span>adicionar ao carrinho {{ saleProduct[6] }}</span>
               </v-btn>
             </section>
           </v-card-text>
@@ -72,7 +73,14 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "ProductCard",
   methods: {
-    ...mapActions(["fetchProductsForSale", "addToCart"]),
+    ...mapActions([
+      "fetchProductsForSale",
+      "addToCart",
+      "updateProductQauntity",
+    ]),
+    updatePro(quantity, id_product) {
+      this.updateProductQauntity({ quantity, id_product });
+    },
   },
   computed: {
     ...mapGetters(["allProductsForSale"]),

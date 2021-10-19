@@ -3,6 +3,8 @@ import Vuex from 'vuex';
 
 import products from './modules/products';
 import sales from './modules/sales';
+import user from './modules/user';
+import filter from './modules/filter'
 
 // load vuex
 Vue.use(Vuex);
@@ -10,10 +12,13 @@ Vue.use(Vuex);
 // create store
 export default new Vuex.Store({
   // state in vuex, data in components
+  /* strict: true, */
+
   state: {
-    user: "true",
+    showAlert: false
     /* categories: null */
   },
+
   // commit and track state changes (state, payload)
   mutations: {
     /* SET_LOADING(state, loadingStatus){
@@ -31,7 +36,6 @@ export default new Vuex.Store({
     /*  SET_CATEGORIES(state, categories) {
        state.categories = categories
      } */
-
   },
   // action should not update store state, call the mutations to do it - actions in vuex, methods in components
   actions: {
@@ -66,7 +70,9 @@ export default new Vuex.Store({
   },
   modules: {
     products,
-    sales
+    sales,
+    user,
+    filter
   },
 
   // getters in vuex, computed in components

@@ -10,7 +10,7 @@
           v-on="on"
           :disabled="!isFiltering"
         >
-          <v-icon color="white" dark> mdi-filter-off-outline </v-icon>
+          <v-icon color="orange" dark> mdi-filter-off-outline </v-icon>
         </v-btn>
       </template>
       <span>Restar filtro</span>
@@ -22,7 +22,6 @@
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "ResetFilter",
-
   methods: {
     ...mapActions(["fetchProducts"]),
     resetFilter() {

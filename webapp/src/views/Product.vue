@@ -1,11 +1,6 @@
 <template>
   <div class="OLa">
     <FilterMenu />
-    <!-- <section v-if="errored">
-      <p>Erro ao carregar os produtos, aperte f5 ou volte mais tarde</p>
-    </section>
-
-    <span v-if="loading">Carregando...</span> -->
     <v-container>
       <v-row>
         <v-col
@@ -70,12 +65,6 @@ import FilterMenu from "../components/filterComponents/FilterMenu.vue";
 
 export default {
   name: "Product",
-  data() {
-    return {
-      /*  loading: false,
-      errored: false, */
-    };
-  },
   components: {
     AddProductForm,
     EditProductModal,

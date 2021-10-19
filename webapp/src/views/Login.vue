@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-alert
+      max-width="500"
       dismissible
       v-model="showAlert"
       border="top"
@@ -9,13 +10,13 @@
     >
       Senha ou Email Inválidos
     </v-alert>
-    <h1>Login</h1>
-    <v-form ref="loginForm" @submit.prevent="submit">
-      <v-container>
-        <v-row>
+    <v-container>
+      <v-form ref="loginForm" @submit.prevent="submit">
+        <h1>Login</h1>
+        <v-row class="d-flex">
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="form.userEmail"
+              v-model="form.email"
               :rules="rules.email"
               color="purple darken-2"
               label="Email"
@@ -25,7 +26,7 @@
 
           <v-col cols="12" sm="6">
             <v-text-field
-              v-model="form.userPassword"
+              v-model="form.password"
               :rules="rules.password"
               color="purple darken-2"
               type="password"
@@ -35,24 +36,25 @@
           </v-col>
         </v-row>
 
-        <v-btn text color="primary" type="submit"> Login </v-btn>
-      </v-container>
-    </v-form>
+        <v-btn color="orange" dark type="submit" class="mt-8">
+          <span>Login</span>
+          <v-icon right>mdi-login-variant</v-icon>
+        </v-btn>
+      </v-form>
+    </v-container>
   </div>
 </template>
 
 <script>
-import api from "../services/api";
-
-import store from "@vue/cli-plugin-vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "Login",
   data() {
     return {
       form: {
-        userEmail: "",
-        userPassword: "",
+        email: "",
+        password: "",
       },
       rules: {
         email: [
@@ -65,32 +67,22 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["login"]),
     async submit() {
       if (this.$refs.loginForm.validate()) {
-        try {
-          const result = await api.post("/login", this.form);
-
-          const user = result.data;
-          console.log(result);
-
-          localStorage.setItem("userId", user[0]);
-
-          console.log(user[0]);
-
-          //store user in the vuex store
-          /*  this.$store.dispatch('action store function') */
-
-          // redirect user to home
-          this.$router.push("/home");
-        } catch (error) {
-          console.log(error);
-          this.showAlert = true;
+        await this.login(this.form);
+        if (this.isAuth) {
+          console.log("hello");
+          console.log(this.isAuth);
+          this.$router.replace({ name: "Home" });
         }
       } else {
+        console.log("hello2");
         this.showAlert = true;
       }
     },
   },
+  computed: mapGetters(["isAuth"]),
 };
 </script>
 

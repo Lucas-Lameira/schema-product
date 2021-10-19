@@ -1,46 +1,52 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import Sale from '../views/Sale.vue'
+import Vue from 'vue';
+import VueRouter from 'vue-router';
+import Home from '../views/Home.vue';
+import Sale from '../views/Sale.vue';
 import Purchase from '../views/Purchase.vue'
 import Product from '../views/Product.vue';
-import Login from '../views/Login.vue'
+import Login from '../views/Login.vue';
+import userStore from '../store/modules/user';
+
 Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
     path: '/login',
-    name: 'login',
+    name: 'Login',
     component: Login
   },
   {
-    path: '/',
-    name: 'home',
+    path: '/home',
+    name: 'Home',
     component: Home,
     meta: { requiresAuth: true } // expect an object - use meta in protected route
   },
   {
     path: '/purchases',
-    name: 'purchases',
+    name: 'Purchases',
     component: Purchase,
     meta: { requiresAuth: true }
   },
   {
     path: '/sales',
-    name: 'sales',
+    name: 'Sales',
     component: Sale,
     meta: { requiresAuth: true }
   },
   {
     path: '/products',
-    name: 'products',
+    name: 'Products',
     component: Product,
     meta: { requiresAuth: true }
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/history',
+    name: 'History',
+    component: () => import(/* webpackChunkName: "about" */ '../views/History.vue')
   },
   {
     path: '/404',
@@ -57,29 +63,20 @@ const router = new VueRouter({
   routes
 })
 
-// router guard
-// to route: route we are going to
 
-/* router.beforeEach((to, from, next) => {
+router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
-    // need to login
-    if (!this.$store.state.user) {
-      this.$router.push('/')
+    // this route requires auth, check if logged in
+    // if not, redirect to login page.
+    console.log(userStore.state.isAuth)
+    if (!userStore.state.isAuth) {
+      next('/login')
     } else {
       next()
     }
   } else {
-    next()
+    next() // make sure to always call next()!
   }
 })
- */
-/* router.beforeEach((to, from, next) => {
-  const requireAuth = to.matched.some(record => record.meta.requireAuth);
-  if (!this.$store.state.user && requireAuth) {
-    this.$router.push('/login')
-  } else {
-    next();
-  }
-})
- */
+
 export default router

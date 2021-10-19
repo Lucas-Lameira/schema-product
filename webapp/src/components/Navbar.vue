@@ -33,13 +33,13 @@
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
           <v-btn class="orange white--text" v-bind="attrs" v-on="on">
-            <span>Lucas lameira</span>
+            <span>{{ getUser[1] }}</span>
             <v-icon right>mdi-menu-down-outline</v-icon>
           </v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item>
+            <v-list-item-title @click="signout"> Sign out </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -48,6 +48,7 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import Cart from "./Cart.vue";
 
 export default {
@@ -59,29 +60,23 @@ export default {
     return {
       routes: [
         { route: "/home", name: "Home" },
-        { route: "/products", name: "Products" },
-        { route: "/sales", name: "Sales" },
+        { route: "/products", name: "Product" },
+        { route: "/sales", name: "Sale" },
         { route: "/purchases", name: "Purchase" },
-        { route: "/about", name: "About" },
+        { route: "/history", name: "History" },
       ],
-      items: [
-        { title: "Click Me" },
-        { title: "Click Me" },
-        { title: "Click Me" },
-        { title: "Click Me 2" },
-      ],
+      menuItens: ["signout"],
     };
   },
   methods: {
     signout() {
-      //remover do localstorage
-      localStorage.removeItem("userId");
-
-      // resetar o estado do usuário
-
+      console.log("sair");
+      this.$store.dispatch("logout");
+      this.$router.replace({ name: "Login" });
       // mover para a página de login
-      this.$router.push("/login");
+      /* this.$router.push("/login"); */
     },
   },
+  computed: mapGetters(["getUser"]),
 };
 </script>
