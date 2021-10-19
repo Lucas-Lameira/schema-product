@@ -90,10 +90,13 @@ def sales():
                 # list of tuple
                 row = result.fetchall()  # list
 
-        elif request.method == "POST":
-            user_id = request.args.get("user_id")
+            status_code = 200
 
-            # raise an error if the user is not valid
+        elif request.method == "POST":
+            user_id = request.args.get("id")
+            print("userID: ", user_id)
+
+            # raise an error if the user_id is not valid
             if user_id == None or not user_id.isdigit():
                 raise Error("No user")
 
@@ -105,27 +108,41 @@ def sales():
             for result in cursor.stored_results():
                 row = result.fetchall()
 
+                # raise an error if the user id does not exists  [("user does not exists",)]
+                if row[0][0] == -1:
+                    raise Error("User id Invalid or does not exists")
+
                 # extrac the code for sale [(code,)]
                 code_sale = row[0][0]
+                print("code_sale: ", code_sale)
 
             # [quantity, cod_product] - [[],[]]
             sales_data = request.get_json()
+            print("sales_data: ", sales_data)
 
             # make sale
             for sale_item in sales_data:
                 sale_item.append(code_sale)
+                print("sale_item: ", sale_item)
                 cursor.callproc('make_sale', sale_item)
                 for result in cursor.stored_results():
                     # get return from db [(1,)]
                     row = result.fetchall()
-                    print(row)
+                    # row:  [(1,)] returned value when sale made
+                    # row:  [('Quantidade insuficiente no estoque',)] returned when not enough product
+
+            # call the database and get the updated products
+            # oorr return the updated products after make a sale
+            row = "Register sale Success!"
+            status_code = 201
     except Error as error:
         print(error)
+        status_code = 400
     finally:
         cursor.close()
         connection.close()
 
-    return "flask.jsonify(row)"
+    return flask.jsonify(row), status_code
 
 
 @app.route('/login', methods=["POST"])
@@ -135,9 +152,10 @@ def login():
         cursor = connection.cursor()
 
         data = request.get_json()
+        print(data)
 
         # lazy
-        args = [data['userEmail'], data['userPassword']]
+        args = [data['email'], data['password']]
 
         cursor.callproc('login_user', args)
 
@@ -146,23 +164,22 @@ def login():
             # list of tuple
             row = result.fetchall()  # list [()]
 
-        # [('Senha ou Email Inválidos',)]
+        # raise an error if [('Senha ou Email Inválidos',)]
+        if len(row[0]) == 1:
+            raise Error(row[0][0])
+
         # (1, 'lucas lameira', 'lucaslameira@gmail.com')
         # row list
         # row[0] tuple
-
-        if len(row[0]) == 3:
-            status_code = 200
-        else:
-            status_code = 401
-
+        status_code = 200
     except Error as error:
         print(error)
+        status_code = 401
     finally:
         cursor.close()
         connection.close()
 
-    # tuple isn't a valid response
+    # tuple isn't a valid response, so return a jsonify
     return flask.jsonify(row[0]), status_code
 
 
@@ -242,6 +259,84 @@ def teste():
         connection.close()
 
     return flask.jsonify(row)
+
+
+@app.route('/sales/history', methods=["GET"])
+def sales_history():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        cursor.callproc('sales_history')
+        for result in cursor.stored_results():
+            sales = result.fetchall()
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(sales)
+
+
+@app.route('/purchases/history', methods=["GET"])
+def purchases_history():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        cursor.callproc('purchase_history')
+        for result in cursor.stored_results():
+            purchases = result.fetchall()
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(purchases)
+
+
+@app.route('/purchases')
+def purchases():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        data = request.get_json()
+
+        cursor.callproc('new_purchase', data)
+        """  for result in cursor.stored_results():
+            purchases = result.fetchall() """
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(purchases)
+
+
+@app.route('/suppliers')
+def suppliers():
+    try:
+        connection = MySQLConnection(**DB_CONFIG)
+        cursor = connection.cursor()
+
+        cursor.callproc('get_suppliers')
+        for result in cursor.stored_results():
+            suppliers = result.fetchall()
+
+    except Error as error:
+        print(error)
+    finally:
+        cursor.close()
+        connection.close()
+
+    return flask.jsonify(suppliers)
 
 
 if __name__ == '__main__':
