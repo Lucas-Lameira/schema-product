@@ -9,14 +9,13 @@ END$$
 DELIMITER ;
 
 
--- ------------------------------RF010 New purchase -------------------------------DONE----------
+-- ----------drop this -------------RF010 New purchase -------------------------------DONE----------
 DELIMITER $$
 CREATE PROCEDURE new_purchase(
-	_date DATE, 
     price DECIMAL(5,2), 
     product_qty INT,
     isInsertedInProduct TINYINT, 
-    profit DECIMAL (4,2), 
+    profit DECIMAL (4,2),
     user_id INT, 
     cod_product INT,
     id_supplier INT
@@ -24,6 +23,8 @@ CREATE PROCEDURE new_purchase(
 BEGIN
 	
     -- variables
+	DECLARE _date DATE;
+    
     DECLARE new_price DECIMAL(5, 2);
     DECLARE stock INTEGER;
     DECLARE new_stock INTEGER;
@@ -37,8 +38,11 @@ BEGIN
     SELECT quantidade, quantidade_minima, isLowStock
     INTO stock, min_qty, isQtyBelow FROM produto
     WHERE cod_produto = cod_product;
+	
+    SET _date = CURDATE();
     
 	START TRANSACTION;
+	
     
 	INSERT INTO item_compra
     VALUES (
@@ -131,7 +135,7 @@ BEGIN
     END IF;
 END$$
 DELIMITER ;
-drop trigger change_product;
+
 
 
 -- ------------------------------ update purchase --------------------------------DONE------
@@ -183,18 +187,6 @@ describe item_compra;
 
 
 -- RF010------------------------------ show purchase history ------------------------------DONE--------
-DELIMITER $$
-CREATE PROCEDURE purchase_history()
-BEGIN
-	SELECT ic.data_compra, ic.preco_compra, ic.quantidade, ic.inserido, p.nome
-	FROM item_compra as ic JOIN produto as p
-	ON ic.cod_produto = p.cod_produto;
-END$$
-DELIMITER ;
-CALL purchase_history();
-
-
--- ------------------------------ show purchase history --------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE purchase_history()
 BEGIN

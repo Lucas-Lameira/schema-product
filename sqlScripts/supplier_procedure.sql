@@ -139,3 +139,16 @@ DROP PROCEDURE delete_supplier_phone;
 CALL delete_supplier_phone(2, '(91) 97979-8787');
 SELECT * FROM telefone;
 
+
+
+
+
+-- ------------------------------get suppliers--------------------------------DONE------
+DELIMITER $$
+CREATE PROCEDURE get_suppliers()
+BEGIN
+	SELECT * FROM fornecedor;
+END$$
+DELIMITER ;
+CALL get_suppliers();
+

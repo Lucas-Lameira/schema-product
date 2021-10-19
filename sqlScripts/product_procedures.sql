@@ -11,6 +11,7 @@ END$$
 DELIMITER ;
 
 
+
 -- ------------------------------Get default categories-------------------------------DONE-------
 DELIMITER $$
 CREATE PROCEDURE get_categories()
@@ -19,7 +20,6 @@ BEGIN
 END$$
 DELIMITER ;
 
-CALL get_categories();
 
 
 -- ------------------------------Add new product-------------------------------DONE-------
@@ -64,12 +64,8 @@ BEGIN
 END$$
 DELIMITER ;
 
-drop procedure add_new_product;
 CALL add_new_product('Heine quem', 36, 7.90, 15, 1);
 CALL add_new_product('delete this please 4', 14, 2.90, 10, 1);
-select * from categoria;
-select * from produto;
-describe produto;
 
 
 
@@ -83,8 +79,6 @@ BEGIN
     WHERE cod_produto = codigo;
 END$$
 DELIMITER ;
-drop procedure search_product;
-call search_product(5);
 
 
 
@@ -105,11 +99,6 @@ BEGIN
     ON produto.id_categoria = categoria.id ORDER BY nome;
 END$$
 DELIMITER ;
-DROP PROCEDURE get_products;
-CALL get_products();	
-
-
-
 
 
 
@@ -131,9 +120,6 @@ BEGIN
 	WHERE categoria.id = id ORDER BY produto.nome;
 END$$
 DELIMITER ;
--- same as CALL products_by_category('1');
-drop procedure products_by_category;
-CALL products_by_category(2);
 
 
 
@@ -147,7 +133,7 @@ BEGIN
     WHERE produto.nome LIKE CONCAT('%',_nome,'%');
 END$$
 DELIMITER ;
-CALL search_product_by_name('teste110');
+
 
 
 -- RF020------------------------------ Search product by price-------------------------------DONE-------
@@ -160,7 +146,7 @@ BEGIN
     WHERE produto.preco_venda < price;
 END$$
 DELIMITER ;
-CALL search_product_by_price(4.2);
+
 
 
 -- RF016------------------------------Update a product--------------------------------DONE------
@@ -200,12 +186,9 @@ BEGIN
 END$$
 DELIMITER ;
 
-drop procedure update_product;
-CALL update_product(3, 'cerveja skola beet', 31, 3.90, 30, 1);
-select * from produto;
 
 
--- RF015------------------------------Delete a product------------------------------DONE--------
+-- RF015-----------------------Delete a product passinng email and password-----------------------DONE--------
 DELIMITER $$
 CREATE PROCEDURE delete_product(
 	product_id INT,
@@ -234,11 +217,7 @@ BEGIN
 	END IF;
 END$$
 DELIMITER ;
-CALL delete_product(18, 'lucaslameira@gmail.com', '123456');
-SELECT * FROM produto;
-DROP PROCEDURE delete_product;
-describe usuario;
-select * from usuario;
+
 
 -- RF008------------------------------show product supplier--------------------------------DONE------
 DELIMITER $$
@@ -253,7 +232,7 @@ BEGIN
 	ON p.cod_produto = ic.cod_produto;
 END$$
 DELIMITER ;
-CALL show_product_supplier();
+
 
 
 -- RF011---------------------- show products available for sale ---------------------------DONE---------
@@ -269,9 +248,6 @@ BEGIN
 	WHERE quantidade > 0 ORDER BY nome;
 END$$
 DELIMITER ;
-CALL products_for_sale();
-DROP procedure products_for_sale;
-select * from produto;
 
 
 
@@ -287,9 +263,3 @@ BEGIN
     COMMIT;
 END$$
 DELIMITER ;
-
-SELECT * FROM produto;
-DROP PROCEDURE delete_product;
-
-
-

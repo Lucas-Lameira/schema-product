@@ -17,11 +17,11 @@ BEGIN
 	JOIN item_venda 
 	ON item_venda.cod_venda = venda.cod_venda
 	JOIN produto 
-	ON produto.cod_produto = item_venda.cod_produto ORDER BY data_venda;
+	ON produto.cod_produto = item_venda.cod_produto ORDER BY data_venda DESC;
 END$$
 DELIMITER ;
 
-drop procedure sales_history;
+DROP PROCEDURE sales_history;
 CALL sales_history();
 
 
@@ -30,21 +30,26 @@ DELIMITER $$
 CREATE PROCEDURE register_sale(user_id INT)
 BEGIN
     DECLARE sale_code INT;
-    
-    START TRANSACTION;
-		INSERT INTO venda (cod_venda, id_usuario) VALUES (DEFAULT, user_id);
-        SET sale_code = LAST_INSERT_ID();
-	COMMIT;
-    
-    SELECT sale_code;
+	
+    IF validate_userId(user_id) = 1 THEN
+		START TRANSACTION;
+			INSERT INTO venda (cod_venda, id_usuario) VALUES (DEFAULT, user_id);
+			SET sale_code = LAST_INSERT_ID();
+		COMMIT;
+        SELECT sale_code;
+    ELSE
+		SELECT -1;
+    END IF;
 END$$
 DELIMITER ;
 
+drop procedure register_sale;
+select * from usuario;
 -- ---------------------------- Make a sale --------------------------------DONE------
 DELIMITER $$
 CREATE PROCEDURE make_sale(
-    qty INT,
     cod_product INT,
+    qty INT,
 	cod_sale INT
 )
 BEGIN
@@ -63,7 +68,6 @@ BEGIN
 		IF (product_quantity - qty) >= 0 THEN
 			INSERT INTO item_venda (data_venda, quantidade, cod_venda, cod_produto) 
 			VALUES (_date, qty, cod_sale, cod_product);
-            
             SELECT 1;
 		ELSE
 			SELECT "Quantidade insuficiente no estoque";
